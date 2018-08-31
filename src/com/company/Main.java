@@ -1,58 +1,50 @@
 package com.company;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        List<Dier> dieren = new ArrayList<>();
-        dieren.add(new Hond("Bello"));
-        dieren.add(new Kat("Minou"));
-        //dieren.add(new Dier("animal"));
-        for (Dier d : dieren) {
-            System.out.printf("Ik heet %s en ik %s%n", d.getNaam(), d.getGeluid());
+        Set<Persoon> personen = new HashSet<>();
+        personen.add(new Persoon("Karen", LocalDate.of(1974, 10, 28)));
+        personen.add(new Persoon("Kristel", LocalDate.of(1975, 12, 10)));
+        personen.add(new Persoon("Kathleen", LocalDate.of(1978, 6, 18)));
+        personen.add(new Leeftijdleugenaar("Josje", LocalDate.of(1986, 2, 16)));
+        for (Persoon p : personen) {
+            System.out.printf("%s is %d jaar oud.%n", p.getNaam(), p.getLeeftijd());
         }
     }
 }
 
-abstract class Dier {
-    public abstract String getNaam();
-    public abstract String getGeluid();
-}
+    class Persoon {
+        private String naam;
+        private LocalDate geboortedatum;
 
-class Hond extends Dier{
-    private String naam;
-    private String geluid = "blaf";
+        public Persoon(String naam, LocalDate geboortedatum) {
+            this.naam = naam;
+            this.geboortedatum = geboortedatum;
+        }
 
-    public Hond(String naam) {
-        this.naam = naam;
+        public String getNaam() {
+            return naam;
+        }
+
+        public int getLeeftijd() {
+            LocalDate vandaag = LocalDate.now();
+            Period periode = Period.between(geboortedatum, vandaag);
+            return periode.getYears();
+        }
     }
 
-    public String getNaam() {
-        return naam;
-    }
+    class Leeftijdleugenaar extends Persoon {
+        public Leeftijdleugenaar(String naam, LocalDate geboortedatum) {
+            super(naam, geboortedatum);
+        }
 
-    public String getGeluid() {
-        return geluid;
+        @Override
+        public int getLeeftijd() {
+            return super.getLeeftijd() + 10;
+        }
     }
-}
-
-class Kat extends Dier{
-    private String naam;
-    private String geluid = "miauw";
-
-    public Kat(String naam) {
-        this.naam = naam;
-    }
-
-    public String getNaam() {
-        return naam;
-    }
-
-    public String getGeluid() {
-        return geluid;
-    }
-}
