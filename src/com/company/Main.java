@@ -1,74 +1,58 @@
 package com.company;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        Figuur[] figuren = new Figuur[4];
-        for (int i = 0; i < 2; i++) {
-            System.out.print("Geef zijde van vierkant: ");
-            int zijde = Integer.parseInt(scanner.nextLine());
-            figuren[i] = new Vierkant(zijde);
-        }
-        for (int i = 2; i < figuren.length; i++) {
-            System.out.print("Geef straal van cirkel: ");
-            int straal = Integer.parseInt(scanner.nextLine());
-            figuren[i] = new Cirkel(straal);
-        }
-        Arrays.sort(figuren);
-        for (Figuur f : figuren) {
-            System.out.printf("Een %s met oppervlakte %.2f%n", f, f.getOppervlakte());
+        List<Dier> dieren = new ArrayList<>();
+        dieren.add(new Hond("Bello"));
+        dieren.add(new Kat("Minou"));
+        //dieren.add(new Dier("animal"));
+        for (Dier d : dieren) {
+            System.out.printf("Ik heet %s en ik %s%n", d.getNaam(), d.getGeluid());
         }
     }
 }
 
-abstract class Figuur implements Comparable<Figuur>{
-    public abstract double getOppervlakte();
-
-
-    @Override
-    public int compareTo(Figuur o){
-        return Double.compare(this.getOppervlakte(), o.getOppervlakte());
-    }
-
+abstract class Dier {
+    public abstract String getNaam();
+    public abstract String getGeluid();
 }
 
+class Hond extends Dier{
+    private String naam;
+    private String geluid = "blaf";
 
-class Vierkant extends Figuur implements Comparable<Figuur>{
-    private int zijde;
-
-    public Vierkant(int zijde) {
-        this.zijde = zijde;
+    public Hond(String naam) {
+        this.naam = naam;
     }
 
-    public double getOppervlakte() {
-        return zijde * zijde;
+    public String getNaam() {
+        return naam;
     }
 
-    @Override
-    public String toString() {
-        return "Vierkant";
+    public String getGeluid() {
+        return geluid;
     }
 }
 
+class Kat extends Dier{
+    private String naam;
+    private String geluid = "miauw";
 
-class Cirkel extends Figuur implements Comparable<Figuur>{
-    private int straal;
-    private double oppervlakte;
-
-    public Cirkel(int straal) {
-        this.straal = straal;
+    public Kat(String naam) {
+        this.naam = naam;
     }
 
-    public double getOppervlakte() {
-        oppervlakte = straal*straal*Math.PI;
-        return oppervlakte;
+    public String getNaam() {
+        return naam;
     }
-    @Override
-    public String toString() {
-        return "Cirkel";
+
+    public String getGeluid() {
+        return geluid;
     }
 }
