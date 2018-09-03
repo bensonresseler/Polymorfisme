@@ -6,93 +6,82 @@ import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) {
-        List<Werknemer> werknemers = new ArrayList<>();
-        int urengewerkt = 168;
-        int uurloon = 17;
-        Arbeider joske = new Arbeider("Joske", urengewerkt, uurloon);
-        werknemers.add(joske);
-        Arbeider lewieke = new Arbeider("Lewieke", urengewerkt, uurloon);
-        werknemers.add(lewieke);
-        lewieke.setUrenGewerkt(172);
-        int maandloon = 3500;
-        Bediende marieke = new Bediende("Marieke", maandloon);
-        werknemers.add(marieke);
-        Bediende sky = new Bediende("Sky", maandloon);
-        werknemers.add(sky);
-        sky.setMaandloon(3000);
-        for(Werknemer w: werknemers){
-            System.out.printf("%s verdient %d EURO%n", w.getNaam(), w.getLoon());
+    public Main() {
+    }
+
+    public static void main(String[] args) throws BankRekeningException {
+        Scanner scanner = new Scanner(System.in);
+        Map<String, BankRekening> rekeningen = new HashMap<>();
+        rekeningen.put("000-0000011-11", new BankRekening("000-0000011-11"));
+        rekeningen.put("000-0000022-22", new PositieveBankRekening("000-0000022-22"));
+        System.out.println("De rekeningen:");
+        for(String rek:rekeningen.keySet()){
+            System.out.println( rek);
         }
-        int totaalloon = getMaandloon(werknemers);
-        System.out.println("Het totale loon bedraagt " + totaalloon);
-
-    }
-
-    private static int getMaandloon(List<Werknemer> werknemers) {
-        int totaal = 0;
-        for (Werknemer n: werknemers){
-            int loon = n.getLoon();
-            totaal += loon;
-        } return totaal;
-    }
-
-}
-
-abstract class Werknemer {
-    private String naam;
-
-    public Werknemer(String naam) {
-        this.naam = naam;
-    }
-
-    public String getNaam() {
-        return naam;
-    }
-
-    public abstract int getLoon();
-
-}
-
-class Arbeider extends Werknemer {
-    private int urengewerkt;
-    private int uurloon;
-
-
-    public Arbeider(String naam, int urengewerkt, int uurloon) {
-        super(naam);
-        this.urengewerkt = urengewerkt;
-        this.uurloon = uurloon;
-    }
-
-
-    @Override
-    public int getLoon() {
-        return urengewerkt*uurloon;
-    }
-
-
-    public void setUrenGewerkt(int uren) {
-        this.urengewerkt = uren;
+        System.out.print("Welke rekening: ");
+        String r = scanner.nextLine();
+        BankRekening rekening = rekeningen.get(r);
+        System.out.print("Wilt u 1) storten 2)afhalen? ");
+        String antwoord = scanner.nextLine();
+        System.out.print("Welk bedrag? ");
+        int bedrag = Integer.parseInt(scanner.nextLine());
+        if (antwoord.equals("1")){
+            rekening.storten(bedrag);
+        }else if (antwoord.equals("2")){
+            rekening.afhalen(bedrag);
+        }
+        for(BankRekening rek: rekeningen.values()){
+            System.out.printf("%s: %d EURO%n", rek.getRekeningnummer(), rek.getSaldo());
+        }
     }
 }
 
-class Bediende extends Werknemer {
-    private int maandloon;
-    private int urengewerkt;
+class BankRekeningException extends Exception {
+    public BankRekeningException(String message) {
+        super(message);
+    }
+}
 
-    public Bediende(String naam, int maandloon) {
-        super(naam);
-        this.maandloon = maandloon;
+
+class BankRekening {
+    private String rekeningnummer;
+    private int saldo = 0;
+
+    public BankRekening(String rekeningnummer) {
+        this.rekeningnummer = rekeningnummer;
     }
 
-    public void setMaandloon(int maandloon) {
-        this.maandloon = maandloon;
+    public String getRekeningnummer() {
+        return rekeningnummer;
+    }
+
+    public int getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(int saldo) {
+        this.saldo = saldo;
+    }
+
+    public void storten(int bedrag) {
+        saldo += bedrag;
+    }
+
+    public void afhalen(int bedrag) throws BankRekeningException {
+        saldo -= bedrag;
+    }
+}
+
+class PositieveBankRekening extends BankRekening {
+    private int saldo = 0;
+
+    public PositieveBankRekening(String rekeningnummer) {
+        super(rekeningnummer);
     }
 
     @Override
-    public int getLoon() {
-        return maandloon;
+    public void afhalen(int bedrag) throws BankRekeningException {
+        if (bedrag > saldo) throw new BankRekeningException("Het saldo mag niet negatief worden.");
+        else saldo -= bedrag;
     }
-
 }
